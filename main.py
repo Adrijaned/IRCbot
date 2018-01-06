@@ -31,6 +31,7 @@ def join_channel(channel=channel):
 
 def ping():
     irc_socket.send((bytes("PONG :pingis\n", "UTF-8")))
+    print("PONG")
 
 
 def send_message(message: str, target=channel):
