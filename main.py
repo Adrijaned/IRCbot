@@ -4,6 +4,7 @@ import random
 import time
 import responses
 import regexes
+import urllib.parse
 
 run = True
 irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,9 +16,11 @@ timezone_string = "UTC-01:00"
 gooey_name = "gooey-bridge"
 
 new_remembers = []
+remember_file_name = "/home/adrijaneddebian/remember"
+remember_delimiter = "--------------------------------------------------------"
 
-with open("/home/adrijaneddebian/remember", mode="a") as file:
-    file.write("--------------------------------------------------------\n")
+with open(remember_file_name, mode="a") as file:
+    file.write(remember_delimiter)
 
 
 def join_channel(channel=channel):
@@ -74,7 +77,7 @@ def responder(name: str, message: str, bridged: bool):
     elif regexes.help.match(message):
         send_message(responses.help_url)
     elif regexes.remember.match(message):
-        with open("/home/adrijaneddebian/remember", mode="a") as file:
+        with open(remember_file_name, mode="a") as file:
             note = regexes.remember.match(message).group("note")
             file.write(note + "\n")
             new_remembers.append(note)
@@ -86,6 +89,18 @@ def responder(name: str, message: str, bridged: bool):
     elif regexes.loop.match(message) and regexes.loop_iterations_passed < 10:
         regexes.loop_iterations_passed += 1
         send_message(responses.loop)
+    elif regexes.retrieve.match(message):
+        item = int(regexes.retrieve.match(message).group("num"))
+        with open(remember_file_name, mode='r') as file:
+            while item > 0:
+                temp = file.readline()
+                if temp != remember_delimiter:
+                    item -= 1
+            send_message(file.readline())
+    elif regexes.google.search(message):
+        msg = regexes.google.search(message).group("msg")
+        msg = urllib.parse.quote_plus(msg)
+        send_message(name + ": http://lmgtfy.com/?q=" + msg)
     elif re.match(regexes.bot_prefix, message):
         send_message(responses.not_recognized)
 
@@ -105,6 +120,9 @@ while run:
         message = irc_message[1:].split(":", 1)[1]
         print("------------\n" + message + "\n-------------")
         if len(name) < 17:
+            # for when someone performs an ACTION
+            if message.startswith("ACTION"):
+                continue
             if name == gooey_name:
                 name = re.match(regexes.gooey_prefix, message).group("nick")
                 message = regexes.gooey_preprocessor.match(message).group("msg")

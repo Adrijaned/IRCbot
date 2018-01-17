@@ -29,3 +29,8 @@ say = re.compile(bot_prefix + "([Pp]lease +)?[Ss]ay +(?P<msg>.*) +to +"
 # GooeyJr loop
 loop = re.compile("Adrij: Gooey Jr, at your service!")
 loop_iterations_passed = 0
+# Retrieve message
+retrieve = re.compile(bot_prefix + "[Rr]etrieve +(message +)?(number +)?"
+                                   "(?P<num>\d+)")
+google = re.compile(bot_prefix + ".*(?P<msg>(([Hh][Oo][Ww] +[Tt][Oo])|[Ww]["
+                                 "Hh][Aa][Tt](( +[Ii][Ss])|'[Ss])).*)")
