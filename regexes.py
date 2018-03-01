@@ -34,3 +34,4 @@ retrieve = re.compile(bot_prefix + "[Rr]etrieve +(message +)?(number +)?"
                                    "(?P<num>\d+)")
 google = re.compile(bot_prefix + ".*(?P<msg>(([Hh][Oo][Ww] +[Tt][Oo])|[Ww]["
                                  "Hh][Aa][Tt](( +[Ii][Ss])|'[Ss])).*)")
+issue = re.compile(".*#(?P<num>\d+)[\D$]")

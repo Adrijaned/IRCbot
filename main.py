@@ -10,7 +10,7 @@ run = True
 irc_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = "chat.freenode.net"
 bot_name = "Adrij"
-channel = "#terasology"
+channel = "#destination-sol"
 admin_name = "Adrijaned"
 timezone_string = "UTC-01:00"
 gooey_name = "gooey-bridge"
@@ -101,6 +101,10 @@ def responder(name: str, message: str, bridged: bool):
         msg = regexes.google.search(message).group("msg")
         msg = urllib.parse.quote_plus(msg)
         send_message(name + ": http://lmgtfy.com/?q=" + msg)
+    elif regexes.issue.search(message):
+        issue = regexes.issue.search(message).group("num")
+        send_message("https://github.com/MovingBlocks/DestinationSol/pull/" +
+                     issue)
     elif re.match(regexes.bot_prefix, message):
         send_message(responses.not_recognized)
 
